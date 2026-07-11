@@ -1,0 +1,17 @@
+{
+  "name": "AgroSmart Connect",
+  "short_name": "AgroSmart",
+  "description": "Plataforma digital para agricultura familiar em África — mercado, assistente, formação, alertas e dados.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#F2F7FC",
+  "theme_color": "#0077D4",
+  "lang": "pt",
+  "icons": [
+    { "src": "icon-192.svg", "sizes": "192x192", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "icon-512.svg", "sizes": "512x512", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "icon-512.svg", "sizes": "512x512", "type": "image/svg+xml", "purpose": "maskable" }
+  ]
+}

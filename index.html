@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
+<title>AgroSmart Connect</title>
+<meta name="description" content="Plataforma digital para agricultura familiar em África — mercado, assistente, formação, alertas e dados." />
+<meta name="theme-color" content="#0077D4" />
+<link rel="manifest" href="manifest.json" />
+<link rel="icon" href="icon-192.svg" type="image/svg+xml" />
+<link rel="apple-touch-icon" href="icon-192.svg" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js" defer></script>
+<style>
+  :root{
+    --bg:#F2F7FC; --card:#FFFFFF; --blue:#0077D4; --blue-deep:#00579B;
+    --blue-tint:#A1BEE4; --blue-pale:#EAF3FB; --ink:#14202B; --muted:#5B6B7A;
+    --green:#2E7D32; --red:#C0392B; --amber:#B7791F; --border:#0077D41A;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',sans-serif;}
+  h1,h2,.serif{font-family:'Fraunces',serif;}
+  .mono{font-family:'IBM Plex Mono',monospace;}
+  header{position:sticky;top:0;z-index:20;display:flex;align-items:center;justify-content:space-between;
+    padding:14px 20px;background:#0077D4f2;border-bottom:1px solid #FFFFFF33;backdrop-filter:blur(6px);}
+  .logo{display:flex;align-items:center;gap:8px;font-weight:600;color:#fff;font-size:1.05rem;}
+  nav.desktop{display:none;gap:2px;}
+  @media(min-width:820px){ nav.desktop{display:flex;} .mobile-toggle{display:none;} }
+  nav.desktop button{display:flex;align-items:center;gap:6px;padding:9px 14px;border-radius:8px;font-size:.9rem;
+    font-weight:500;background:transparent;color:#D6E9FB;border:none;cursor:pointer;transition:.15s;}
+  nav.desktop button.active{background:#FFFFFF33;color:#fff;}
+  .mobile-toggle{background:none;border:none;font-size:1.4rem;color:#fff;cursor:pointer;}
+  nav.mobile{display:none;flex-direction:column;background:var(--blue-deep);padding:10px 16px;gap:2px;}
+  nav.mobile.open{display:flex;}
+  nav.mobile button{display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:8px;border:none;
+    background:transparent;color:#D6E9FB;font-size:.9rem;font-weight:500;text-align:left;cursor:pointer;}
+  nav.mobile button.active{background:#FFFFFF33;color:#fff;}
+  .lang-wrap{position:relative;}
+  .lang-btn{display:flex;align-items:center;gap:6px;padding:7px 10px;border-radius:8px;font-size:.75rem;
+    font-weight:700;background:#FFFFFF22;color:#fff;border:1px solid #FFFFFF55;cursor:pointer;}
+  .lang-menu{display:none;position:absolute;right:0;margin-top:8px;background:#fff;border-radius:10px;
+    overflow:hidden;min-width:150px;box-shadow:0 8px 24px #00000033;}
+  .lang-menu.open{display:block;}
+  .lang-menu button{display:flex;justify-content:space-between;align-items:center;width:100%;padding:10px 14px;
+    border:none;background:transparent;font-size:.9rem;text-align:left;cursor:pointer;color:var(--ink);}
+  .lang-menu button.active{background:#0077D422;}
+  .header-right{display:flex;align-items:center;gap:10px;}
+  main{max-width:920px;margin:0 auto;padding:28px 20px 60px;}
+  .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;
+    font-weight:700;color:var(--blue);margin-bottom:8px;}
+  .eyebrow.light{color:var(--blue-pale);}
+  .hero{position:relative;overflow:hidden;border-radius:18px;padding:36px 28px;
+    background:linear-gradient(135deg,#0077D4 0%,#00365E 75%);margin-bottom:36px;}
+  .hero::after{content:"";position:absolute;right:-60px;top:-60px;width:230px;height:230px;border-radius:50%;
+    background:radial-gradient(circle,#A1BEE4,transparent 70%);opacity:.35;}
+  .hero h1{position:relative;color:#fff;font-size:2rem;line-height:1.2;font-weight:600;max-width:600px;}
+  .hero p{position:relative;color:#DCEAFB;max-width:520px;margin-top:12px;}
+  .hero .ctas{position:relative;display:flex;flex-wrap:wrap;gap:10px;margin-top:22px;}
+  .btn-primary{background:#fff;color:var(--blue);padding:12px 20px;border-radius:10px;font-weight:600;
+    border:none;cursor:pointer;font-size:.9rem;}
+  .btn-secondary{background:transparent;color:#fff;border:1px solid #FFFFFF66;padding:12px 20px;border-radius:10px;
+    font-weight:600;cursor:pointer;font-size:.9rem;}
+  .stats{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:36px;}
+  @media(min-width:640px){ .stats{grid-template-columns:repeat(4,1fr);} }
+  .stat-card{background:var(--card);border-radius:14px;padding:16px;border:1px solid var(--border);}
+  .stat-card .icon{font-size:1.3rem;}
+  .stat-card .value{font-family:'Fraunces',serif;font-size:1.5rem;font-weight:700;margin-top:6px;}
+  .stat-card .label{font-size:.75rem;color:var(--muted);margin-top:4px;}
+  .module-grid{display:grid;gap:14px;}
+  @media(min-width:700px){ .module-grid{grid-template-columns:1fr 1fr;} }
+  .module-card{display:flex;gap:14px;align-items:flex-start;background:var(--card);border:1px solid var(--border);
+    border-radius:14px;padding:18px;cursor:pointer;text-align:left;}
+  .module-card .ic{background:#0077D41A;border-radius:10px;padding:9px 11px;font-size:1.3rem;}
+  .module-card .title{font-weight:600;}
+  .module-card .desc{font-size:.85rem;color:var(--muted);margin-top:4px;}
+  h2.page-title{font-size:1.5rem;font-weight:600;margin:0 0 4px;}
+  p.page-sub{color:var(--muted);margin:0 0 22px;}
+  .search-box{display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--border);
+    border-radius:10px;padding:10px 14px;margin-bottom:22px;}
+  .search-box input{border:none;background:transparent;outline:none;width:100%;font-size:.9rem;color:var(--ink);font-family:inherit;}
+  .grid-3{display:grid;gap:14px;}
+  @media(min-width:640px){ .grid-3{grid-template-columns:1fr 1fr;} }
+  @media(min-width:960px){ .grid-3{grid-template-columns:1fr 1fr 1fr;} }
+  .product-card, .course-card, .alert-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;}
+  .product-card .top{display:flex;justify-content:space-between;align-items:flex-start;}
+  .pname{font-family:'Fraunces',serif;font-weight:600;}
+  .pill{font-size:.7rem;font-weight:700;padding:4px 10px;border-radius:99px;}
+  .punit{font-size:.75rem;color:var(--muted);margin-top:2px;}
+  .pprice{font-family:'IBM Plex Mono',monospace;font-size:1.4rem;font-weight:700;margin-top:10px;}
+  .pprice small{font-size:.8rem;font-weight:400;}
+  .pmeta{display:flex;justify-content:space-between;font-size:.75rem;color:var(--muted);margin-top:10px;}
+  .pbtn{margin-top:10px;width:100%;padding:9px;border-radius:9px;background:var(--blue);color:#fff;border:none;
+    font-weight:600;font-size:.85rem;cursor:pointer;}
+  .empty{grid-column:1/-1;text-align:center;color:var(--muted);padding:40px 0;}
+  .chat-wrap{display:flex;flex-direction:column;height:66vh;}
+  .chat-box{flex:1;overflow-y:auto;background:var(--blue-pale);border:1px solid var(--border);border-radius:14px;
+    padding:16px;display:flex;flex-direction:column;gap:10px;}
+  .bubble{max-width:80%;padding:10px 14px;border-radius:10px;font-size:.9rem;white-space:pre-wrap;line-height:1.4;}
+  .bubble.user{align-self:flex-end;background:var(--blue);color:#fff;}
+  .bubble.bot{align-self:flex-start;background:#fff;color:var(--ink);}
+  .suggestions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;}
+  .sugg{font-size:.75rem;padding:7px 12px;border-radius:99px;border:1px solid #0077D466;background:transparent;
+    color:var(--blue);cursor:pointer;}
+  .chat-input{display:flex;gap:8px;margin-top:12px;}
+  .chat-input input{flex:1;padding:12px 14px;border-radius:10px;border:1px solid var(--border);background:#fff;
+    font-size:.9rem;outline:none;font-family:inherit;color:var(--ink);}
+  .chat-input button{background:var(--blue);color:#fff;border:none;border-radius:10px;padding:0 16px;cursor:pointer;font-size:1.1rem;}
+  .progress-txt{font-size:.85rem;color:var(--blue);margin-bottom:18px;}
+  .course-card{display:flex;gap:12px;}
+  .course-card .title{font-weight:600;}
+  .course-card .meta{display:flex;align-items:center;gap:8px;font-size:.75rem;color:var(--muted);margin-top:6px;}
+  .weather-card{display:flex;align-items:center;gap:18px;background:#0077D414;border:1px solid #0077D444;
+    border-radius:14px;padding:18px;margin-bottom:22px;}
+  .weather-card .temp{font-family:'Fraunces',serif;font-size:1.6rem;font-weight:700;}
+  .alert-card{display:flex;gap:12px;}
+  .alert-card .ic{background:#0000;border-radius:10px;padding:8px;font-size:1.2rem;}
+  .alert-top{display:flex;justify-content:space-between;align-items:flex-start;}
+  .alert-meta{display:flex;gap:8px;font-size:.75rem;color:var(--muted);margin-top:4px;}
+  .chart-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px;}
+  .chart-card .ctitle{font-weight:600;margin-bottom:10px;}
+  .dados-grid{display:grid;gap:16px;}
+  @media(min-width:760px){ .dados-grid{grid-template-columns:1fr 1fr;} .dados-grid .span2{grid-column:1/-1;} }
+  footer{text-align:center;font-size:.75rem;color:var(--muted);padding:30px 0;}
+  ::-webkit-scrollbar{width:8px;} ::-webkit-scrollbar-thumb{background:#0077D455;border-radius:4px;}
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+/* ======================= DADOS / TRADUÇÕES ======================= */
+const LANGS = [
+  { code:"pt", label:"Português", short:"PT" },
+  { code:"en", label:"English", short:"EN" },
+  { code:"fr", label:"Français", short:"FR" },
+  { code:"es", label:"Español", short:"ES" },
+];
+
+const MODULE_ORDER = ["mercado","assistente","formacao","alertas"];
+const MODULE_ICON = { inicio:"🌱", mercado:"🛒", assistente:"🤖", formacao:"🎓", alertas:"⛈️", dados:"📊" };
+const ALERT_ICON = ["🌧️","🌡️","💨","🐛"];
+const ALERT_COLOR = ["#0077D4","#B7791F","#2E7D32","#C0392B"];
+const PERDA_COLOR = ["#C0392B","#0077D4"];
+
+const T = {
+pt: {
+  nav:{inicio:"Início",mercado:"Mercado",assistente:"Assistente",formacao:"Formação",alertas:"Alertas",dados:"Dados"},
+  footer:"AgroSmart Connect · Protótipo para UNESCO Youth Hackathon 2026",
+  hero:{
+    eyebrow:"Boletim do Agricultor · Edição de hoje",
+    headline:"Transformando agricultores em empreendedores digitais.",
+    sub:"Mercado direto, conselho técnico com inteligência artificial, alertas climáticos e formação — tudo num único lugar, mesmo com pouca internet.",
+    ctaMercado:"Ver preços de hoje", ctaAssistente:"Falar com o Assistente",
+  },
+  stats:[["50.000","meta de agricultores"],["+30%","renda média"],["-25%","perdas agrícolas"],["20.000","jovens capacitados"]],
+  modulesTitle:"Módulos da plataforma",
+  modules:[
+    {id:"mercado",titulo:"Mercado Digital Agrícola",desc:"Venda direta, catálogo e preços atualizados diariamente."},
+    {id:"assistente",titulo:"Assistente Inteligente Agrícola",desc:"Recomendações de plantio, irrigação, fertilização e pragas."},
+    {id:"formacao",titulo:"Centro de Formação Digital",desc:"Cursos gratuitos e guias práticos em vídeo."},
+    {id:"alertas",titulo:"Sistema de Alertas",desc:"Previsão meteorológica e avisos fitossanitários."},
+  ],
+  mercado:{
+    eyebrow:"Módulo A", titulo:"Mercado Digital Agrícola",
+    sub:"Preços atualizados hoje, por região. Venda direta, sem intermediários.",
+    buscaPlaceholder:"Procurar produto (ex: milho, feijão...)",
+    semResultados:(b)=>`Nenhum produto encontrado para "${b}".`,
+    estoqueLabel:"Estoque", contactar:"Contactar vendedor",
+    niveis:{Alto:"Alto",Médio:"Médio",Baixo:"Baixo"},
+    produtos:[
+      {nome:"Milho",unidade:"saco 50kg",regiao:"Manica",preco:950,variacao:4.2,estoque:"Alto"},
+      {nome:"Mandioca",unidade:"saco 50kg",regiao:"Nampula",preco:620,variacao:-2.1,estoque:"Médio"},
+      {nome:"Feijão Nhemba",unidade:"saco 50kg",regiao:"Tete",preco:1450,variacao:6.8,estoque:"Baixo"},
+      {nome:"Tomate",unidade:"caixa 20kg",regiao:"Maputo",preco:380,variacao:-5.4,estoque:"Alto"},
+      {nome:"Amendoim",unidade:"saco 50kg",regiao:"Nampula",preco:1780,variacao:1.3,estoque:"Médio"},
+      {nome:"Batata-doce",unidade:"saco 50kg",regiao:"Zambézia",preco:540,variacao:3.0,estoque:"Alto"},
+      {nome:"Arroz",unidade:"saco 50kg",regiao:"Gaza",preco:2100,variacao:0.5,estoque:"Médio"},
+      {nome:"Gergelim",unidade:"saco 50kg",regiao:"Cabo Delgado",preco:2650,variacao:8.9,estoque:"Baixo"},
+    ],
+  },
+  assistente:{
+    eyebrow:"Módulo B", titulo:"Assistente Inteligente Agrícola",
+    sub:"Respostas rápidas offline com boas práticas agrícolas.",
+    welcome:"Olá! Sou o Assistente Inteligente Agrícola. Pergunte sobre plantio, irrigação, fertilização, pragas ou clima.",
+    inputPlaceholder:"Escreva a sua pergunta...", send:"Enviar",
+    fallback:"Ainda não tenho uma resposta pronta para isso. Tente perguntar sobre plantio, irrigação, fertilização, pragas ou clima — ou consulte o Centro de Formação.",
+    sugestoes:["Como controlar pragas no milho?","Quando irrigar o tomate?","Que fertilizante usar na mandioca?"],
+    tips:[
+      {kw:["praga","lagarta","inseto","insecto"],r:"Para pragas como a lagarta-do-cartucho: inspecione as plantas semanalmente, use armadilhas com feromona e, se necessário, aplique controlo biológico (ex: Bacillus thuringiensis) antes de recorrer a químicos."},
+      {kw:["irriga","água","agua","rega"],r:"Na época seca, irrigue de manhã cedo ou ao fim da tarde para reduzir a evaporação. O gotejamento de baixo custo poupa até 40% de água em comparação com a rega por aspersão."},
+      {kw:["fertiliz","adubo","solo"],r:"Composto orgânico (esterco curtido + restos vegetais) melhora a estrutura do solo. Aplique 2-3 semanas antes da sementeira e evite excesso de azoto perto da colheita."},
+      {kw:["clima","chuva","seca","tempo"],r:"Consulte o módulo de Alertas antes de plantar ou colher. Em previsão de chuva forte, proteja sementeiras e evite aplicar fertilizante (é lavado pela chuva)."},
+      {kw:["milho"],r:"O milho gosta de solo bem drenado e sol pleno. Espace as plantas 25-30cm e aplique fertilizante nitrogenado 3-4 semanas após a germinação."},
+      {kw:["tomate"],r:"O tomate precisa de rega regular e constante — irregularidades causam rachaduras no fruto. Estacas ajudam a evitar doenças fúngicas."},
+      {kw:["mandioca"],r:"A mandioca tolera solos pobres, mas cresce melhor com boa drenagem. Colheita entre 8-12 meses após plantio, dependendo da variedade."},
+    ],
+  },
+  formacao:{
+    eyebrow:"Módulo C", titulo:"Centro de Formação Digital",
+    sub:"Cursos curtos e gratuitos, pensados para o telemóvel.",
+    progresso:(c,t)=>`${c} de ${t} cursos concluídos`,
+    niveis:{Iniciante:"Iniciante",Intermédio:"Intermédio",Avançado:"Avançado"},
+    cursos:[
+      {titulo:"Compostagem e solo fértil",duracao:"45 min",nivel:"Iniciante",concluido:true},
+      {titulo:"Irrigação por gotejamento de baixo custo",duracao:"1h 10min",nivel:"Intermédio",concluido:true},
+      {titulo:"Vender no mercado digital: fotos e preços",duracao:"30 min",nivel:"Iniciante",concluido:false},
+      {titulo:"Controlo natural de pragas",duracao:"55 min",nivel:"Intermédio",concluido:false},
+      {titulo:"Gestão financeira para pequenos produtores",duracao:"1h 20min",nivel:"Avançado",concluido:false},
+      {titulo:"Adaptação às cheias e secas",duracao:"50 min",nivel:"Intermédio",concluido:false},
+    ],
+  },
+  alertas:{
+    eyebrow:"Módulo D", titulo:"Sistema de Alertas",
+    sub:"Previsão meteorológica e avisos fitossanitários por região.",
+    clima:"céu limpo · vento 12 km/h",
+    niveis:{Alto:"Alto",Médio:"Médio",Baixo:"Baixo"},
+    lista:[
+      {tipo:"Chuva forte",regiao:"Zambézia",nivel:"Alto",janela:"Próximas 24h"},
+      {tipo:"Onda de calor",regiao:"Gaza",nivel:"Médio",janela:"3 dias"},
+      {tipo:"Vento forte",regiao:"Inhambane",nivel:"Baixo",janela:"48h"},
+      {tipo:"Praga da lagarta",regiao:"Manica",nivel:"Alto",janela:"Ativo agora"},
+    ],
+  },
+  dados:{
+    eyebrow:"Módulo E", titulo:"Dados e Estatísticas",
+    sub:"Indicadores de produção, renda e redução de perdas.",
+    chart1:"Produção mensal (toneladas)", chart2:"Renda média acumulada (índice)",
+    chart3:"Perdas pós-colheita: antes vs. depois",
+    meses:["Jan","Fev","Mar","Abr","Mai","Jun"], anos:["Ano 1","Ano 2","Ano 3"],
+    antesDepois:["Antes","Depois"],
+  },
+  chooseLang:"Idioma",
+},
+
+en: {
+  nav:{inicio:"Home",mercado:"Market",assistente:"Assistant",formacao:"Training",alertas:"Alerts",dados:"Data"},
+  footer:"AgroSmart Connect · Prototype for the UNESCO Youth Hackathon 2026",
+  hero:{
+    eyebrow:"The Farmer's Bulletin · Today's edition",
+    headline:"Turning farmers into digital entrepreneurs.",
+    sub:"Direct market access, AI-style technical advice, climate alerts and training — all in one place, even with limited internet.",
+    ctaMercado:"See today's prices", ctaAssistente:"Talk to the Assistant",
+  },
+  stats:[["50,000","farmer registration goal"],["+30%","average income"],["-25%","crop losses"],["20,000","young people trained"]],
+  modulesTitle:"Platform modules",
+  modules:[
+    {id:"mercado",titulo:"Digital Farming Marketplace",desc:"Direct sales, catalog and daily updated prices."},
+    {id:"assistente",titulo:"Smart Farming Assistant",desc:"Recommendations on planting, irrigation, fertilizing and pests."},
+    {id:"formacao",titulo:"Digital Training Center",desc:"Free courses and practical video guides."},
+    {id:"alertas",titulo:"Alert System",desc:"Weather forecasts and plant-health warnings."},
+  ],
+  mercado:{
+    eyebrow:"Module A", titulo:"Digital Farming Marketplace",
+    sub:"Prices updated today, by region. Direct sales, no middlemen.",
+    buscaPlaceholder:"Search for a product (e.g. maize, beans...)",
+    semResultados:(b)=>`No products found for "${b}".`,
+    estoqueLabel:"Stock", contactar:"Contact seller",
+    niveis:{Alto:"High",Médio:"Medium",Baixo:"Low"},
+    produtos:[
+      {nome:"Maize",unidade:"50kg bag",regiao:"Manica",preco:950,variacao:4.2,estoque:"Alto"},
+      {nome:"Cassava",unidade:"50kg bag",regiao:"Nampula",preco:620,variacao:-2.1,estoque:"Médio"},
+      {nome:"Cowpeas",unidade:"50kg bag",regiao:"Tete",preco:1450,variacao:6.8,estoque:"Baixo"},
+      {nome:"Tomato",unidade:"20kg crate",regiao:"Maputo",preco:380,variacao:-5.4,estoque:"Alto"},
+      {nome:"Peanuts",unidade:"50kg bag",regiao:"Nampula",preco:1780,variacao:1.3,estoque:"Médio"},
+      {nome:"Sweet potato",unidade:"50kg bag",regiao:"Zambézia",preco:540,variacao:3.0,estoque:"Alto"},
+      {nome:"Rice",unidade:"50kg bag",regiao:"Gaza",preco:2100,variacao:0.5,estoque:"Médio"},
+      {nome:"Sesame",unidade:"50kg bag",regiao:"Cabo Delgado",preco:2650,variacao:8.9,estoque:"Baixo"},
+    ],
+  },
+  assistente:{
+    eyebrow:"Module B", titulo:"Smart Farming Assistant",
+    sub:"Quick offline answers with good farming practices.",
+    welcome:"Hello! I'm the Smart Farming Assistant. Ask about planting, irrigation, fertilizing, pests or weather.",
+    inputPlaceholder:"Type your question...", send:"Send",
+    fallback:"I don't have a ready answer for that yet. Try asking about planting, irrigation, fertilizing, pests or weather — or check the Training Center.",
+    sugestoes:["How do I control pests in maize?","When should I irrigate tomatoes?","What fertilizer for cassava?"],
+    tips:[
+      {kw:["pest","worm","insect","bug"],r:"For pests like fall armyworm: inspect plants weekly, use pheromone traps, and if needed apply biological control (e.g. Bacillus thuringiensis) before resorting to chemicals."},
+      {kw:["irrigat","water"],r:"In the dry season, irrigate early morning or late afternoon to reduce evaporation. Low-cost drip irrigation saves up to 40% water compared to sprinklers."},
+      {kw:["fertiliz","soil","compost"],r:"Organic compost (aged manure + plant residue) improves soil structure. Apply 2-3 weeks before sowing and avoid excess nitrogen near harvest."},
+      {kw:["climate","rain","drought","weather"],r:"Check the Alerts module before planting or harvesting. If heavy rain is forecast, protect seedlings and avoid applying fertilizer (it washes away)."},
+      {kw:["maize","corn"],r:"Maize likes well-drained soil and full sun. Space plants 25-30cm apart and apply nitrogen fertilizer 3-4 weeks after germination."},
+      {kw:["tomato"],r:"Tomatoes need regular, consistent watering — irregular watering causes fruit cracking. Staking helps prevent fungal disease."},
+      {kw:["cassava"],r:"Cassava tolerates poor soils but grows best with good drainage. Harvest 8-12 months after planting, depending on variety."},
+    ],
+  },
+  formacao:{
+    eyebrow:"Module C", titulo:"Digital Training Center",
+    sub:"Short, free courses, designed for mobile.",
+    progresso:(c,t)=>`${c} of ${t} courses completed`,
+    niveis:{Iniciante:"Beginner",Intermédio:"Intermediate",Avançado:"Advanced"},
+    cursos:[
+      {titulo:"Composting and soil fertility",duracao:"45 min",nivel:"Iniciante",concluido:true},
+      {titulo:"Low-cost drip irrigation",duracao:"1h 10min",nivel:"Intermédio",concluido:true},
+      {titulo:"Selling online: photos and pricing",duracao:"30 min",nivel:"Iniciante",concluido:false},
+      {titulo:"Natural pest control",duracao:"55 min",nivel:"Intermédio",concluido:false},
+      {titulo:"Financial management for smallholders",duracao:"1h 20min",nivel:"Avançado",concluido:false},
+      {titulo:"Adapting to floods and droughts",duracao:"50 min",nivel:"Intermédio",concluido:false},
+    ],
+  },
+  alertas:{
+    eyebrow:"Module D", titulo:"Alert System",
+    sub:"Weather forecasts and plant-health warnings by region.",
+    clima:"clear sky · wind 12 km/h",
+    niveis:{Alto:"High",Médio:"Medium",Baixo:"Low"},
+    lista:[
+      {tipo:"Heavy rain",regiao:"Zambézia",nivel:"Alto",janela:"Next 24h"},
+      {tipo:"Heat wave",regiao:"Gaza",nivel:"Médio",janela:"3 days"},
+      {tipo:"Strong wind",regiao:"Inhambane",nivel:"Baixo",janela:"48h"},
+      {tipo:"Armyworm outbreak",regiao:"Manica",nivel:"Alto",janela:"Active now"},
+    ],
+  },
+  dados:{
+    eyebrow:"Module E", titulo:"Data & Statistics",
+    sub:"Indicators for production, income and loss reduction.",
+    chart1:"Monthly production (tonnes)", chart2:"Cumulative average income (index)",
+    chart3:"Post-harvest losses: before vs. after",
+    meses:["Jan","Feb","Mar","Apr","May","Jun"], anos:["Year 1","Year 2","Year 3"],
+    antesDepois:["Before","After"],
+  },
+  chooseLang:"Language",
+},
+
+fr: {
+  nav:{inicio:"Accueil",mercado:"Marché",assistente:"Assistant",formacao:"Formation",alertas:"Alertes",dados:"Données"},
+  footer:"AgroSmart Connect · Prototype pour le UNESCO Youth Hackathon 2026",
+  hero:{
+    eyebrow:"Le Bulletin du Paysan · Édition du jour",
+    headline:"Transformer les agriculteurs en entrepreneurs numériques.",
+    sub:"Marché direct, conseils techniques, alertes climatiques et formation — le tout en un seul endroit, même avec une connexion limitée.",
+    ctaMercado:"Voir les prix du jour", ctaAssistente:"Parler à l'Assistant",
+  },
+  stats:[["50 000","objectif d'agriculteurs"],["+30%","revenu moyen"],["-25%","pertes agricoles"],["20 000","jeunes formés"]],
+  modulesTitle:"Modules de la plateforme",
+  modules:[
+    {id:"mercado",titulo:"Marché Numérique Agricole",desc:"Vente directe, catalogue et prix mis à jour chaque jour."},
+    {id:"assistente",titulo:"Assistant Agricole Intelligent",desc:"Recommandations sur la plantation, l'irrigation, la fertilisation et les nuisibles."},
+    {id:"formacao",titulo:"Centre de Formation Numérique",desc:"Cours gratuits et guides vidéo pratiques."},
+    {id:"alertas",titulo:"Système d'Alertes",desc:"Prévisions météo et avis phytosanitaires."},
+  ],
+  mercado:{
+    eyebrow:"Module A", titulo:"Marché Numérique Agricole",
+    sub:"Prix mis à jour aujourd'hui, par région. Vente directe, sans intermédiaires.",
+    buscaPlaceholder:"Rechercher un produit (ex : maïs, haricots...)",
+    semResultados:(b)=>`Aucun produit trouvé pour « ${b} ».`,
+    estoqueLabel:"Stock", contactar:"Contacter le vendeur",
+    niveis:{Alto:"Élevé",Médio:"Moyen",Baixo:"Faible"},
+    produtos:[
+      {nome:"Maïs",unidade:"sac de 50kg",regiao:"Manica",preco:950,variacao:4.2,estoque:"Alto"},
+      {nome:"Manioc",unidade:"sac de 50kg",regiao:"Nampula",preco:620,variacao:-2.1,estoque:"Médio"},
+      {nome:"Niébé",unidade:"sac de 50kg",regiao:"Tete",preco:1450,variacao:6.8,estoque:"Baixo"},
+      {nome:"Tomate",unidade:"caisse de 20kg",regiao:"Maputo",preco:380,variacao:-5.4,estoque:"Alto"},
+      {nome:"Arachide",unidade:"sac de 50kg",regiao:"Nampula",preco:1780,variacao:1.3,estoque:"Médio"},
+      {nome:"Patate douce",unidade:"sac de 50kg",regiao:"Zambézia",preco:540,variacao:3.0,estoque:"Alto"},
+      {nome:"Riz",unidade:"sac de 50kg",regiao:"Gaza",preco:2100,variacao:0.5,estoque:"Médio"},
+      {nome:"Sésame",unidade:"sac de 50kg",regiao:"Cabo Delgado",preco:2650,variacao:8.9,estoque:"Baixo"},
+    ],
+  },
+  assistente:{
+    eyebrow:"Module B", titulo:"Assistant Agricole Intelligent",
+    sub:"Réponses rapides hors-ligne avec de bonnes pratiques agricoles.",
+    welcome:"Bonjour ! Je suis l'Assistant Agricole Intelligent. Posez vos questions sur la plantation, l'irrigation, la fertilisation, les nuisibles ou le climat.",
+    inputPlaceholder:"Écrivez votre question...", send:"Envoyer",
+    fallback:"Je n'ai pas encore de réponse pour cela. Essayez de poser une question sur la plantation, l'irrigation, la fertilisation, les nuisibles ou le climat — ou consultez le Centre de Formation.",
+    sugestoes:["Comment lutter contre les nuisibles du maïs ?","Quand irriguer les tomates ?","Quel engrais pour le manioc ?"],
+    tips:[
+      {kw:["nuisible","chenille","insecte"],r:"Pour des nuisibles comme la chenille légionnaire : inspectez les plantes chaque semaine, utilisez des pièges à phéromones et, si nécessaire, appliquez une lutte biologique (ex : Bacillus thuringiensis) avant les produits chimiques."},
+      {kw:["irrigu","eau"],r:"En saison sèche, irriguez tôt le matin ou en fin d'après-midi pour réduire l'évaporation. Le goutte-à-goutte à faible coût économise jusqu'à 40% d'eau par rapport à l'aspersion."},
+      {kw:["engrais","sol","compost"],r:"Le compost organique (fumier mûr + résidus végétaux) améliore la structure du sol. Appliquez-le 2-3 semaines avant les semis et évitez l'excès d'azote près de la récolte."},
+      {kw:["climat","pluie","sécheresse"],r:"Consultez le module Alertes avant de planter ou récolter. En cas de fortes pluies prévues, protégez les semis et évitez d'appliquer de l'engrais (il est lessivé)."},
+      {kw:["maïs"],r:"Le maïs aime les sols bien drainés et le plein soleil. Espacez les plants de 25-30cm et appliquez de l'engrais azoté 3-4 semaines après la germination."},
+      {kw:["tomate"],r:"Les tomates ont besoin d'un arrosage régulier — un arrosage irrégulier provoque des fissures sur le fruit. Le tuteurage aide à prévenir les maladies fongiques."},
+      {kw:["manioc"],r:"Le manioc tolère les sols pauvres mais pousse mieux avec un bon drainage. Récolte 8-12 mois après la plantation, selon la variété."},
+    ],
+  },
+  formacao:{
+    eyebrow:"Module C", titulo:"Centre de Formation Numérique",
+    sub:"Cours courts et gratuits, conçus pour le mobile.",
+    progresso:(c,t)=>`${c} cours terminés sur ${t}`,
+    niveis:{Iniciante:"Débutant",Intermédio:"Intermédiaire",Avançado:"Avancé"},
+    cursos:[
+      {titulo:"Compostage et fertilité du sol",duracao:"45 min",nivel:"Iniciante",concluido:true},
+      {titulo:"Irrigation goutte à goutte à faible coût",duracao:"1h 10min",nivel:"Intermédio",concluido:true},
+      {titulo:"Vendre en ligne : photos et prix",duracao:"30 min",nivel:"Iniciante",concluido:false},
+      {titulo:"Lutte naturelle contre les nuisibles",duracao:"55 min",nivel:"Intermédio",concluido:false},
+      {titulo:"Gestion financière pour petits producteurs",duracao:"1h 20min",nivel:"Avançado",concluido:false},
+      {titulo:"S'adapter aux inondations et sécheresses",duracao:"50 min",nivel:"Intermédio",concluido:false},
+    ],
+  },
+  alertas:{
+    eyebrow:"Module D", titulo:"Système d'Alertes",
+    sub:"Prévisions météo et avis phytosanitaires par région.",
+    clima:"ciel dégagé · vent 12 km/h",
+    niveis:{Alto:"Élevé",Médio:"Moyen",Baixo:"Faible"},
+    lista:[
+      {tipo:"Fortes pluies",regiao:"Zambézia",nivel:"Alto",janela:"24 prochaines heures"},
+      {tipo:"Vague de chaleur",regiao:"Gaza",nivel:"Médio",janela:"3 jours"},
+      {tipo:"Vent fort",regiao:"Inhambane",nivel:"Baixo",janela:"48h"},
+      {tipo:"Chenille légionnaire",regiao:"Manica",nivel:"Alto",janela:"Actif maintenant"},
+    ],
+  },
+  dados:{
+    eyebrow:"Module E", titulo:"Données et Statistiques",
+    sub:"Indicateurs de production, de revenu et de réduction des pertes.",
+    chart1:"Production mensuelle (tonnes)", chart2:"Revenu moyen cumulé (indice)",
+    chart3:"Pertes post-récolte : avant vs. après",
+    meses:["Jan","Fév","Mar","Avr","Mai","Jun"], anos:["An 1","An 2","An 3"],
+    antesDepois:["Avant","Après"],
+  },
+  chooseLang:"Langue",
+},
+
+es: {
+  nav:{inicio:"Inicio",mercado:"Mercado",assistente:"Asistente",formacao:"Formación",alertas:"Alertas",dados:"Datos"},
+  footer:"AgroSmart Connect · Prototipo para el UNESCO Youth Hackathon 2026",
+  hero:{
+    eyebrow:"El Boletín del Agricultor · Edición de hoy",
+    headline:"Transformando agricultores en emprendedores digitales.",
+    sub:"Mercado directo, asesoría técnica, alertas climáticas y formación — todo en un solo lugar, incluso con poca internet.",
+    ctaMercado:"Ver precios de hoy", ctaAssistente:"Hablar con el Asistente",
+  },
+  stats:[["50.000","meta de agricultores"],["+30%","ingreso promedio"],["-25%","pérdidas agrícolas"],["20.000","jóvenes capacitados"]],
+  modulesTitle:"Módulos de la plataforma",
+  modules:[
+    {id:"mercado",titulo:"Mercado Digital Agrícola",desc:"Venta directa, catálogo y precios actualizados a diario."},
+    {id:"assistente",titulo:"Asistente Inteligente Agrícola",desc:"Recomendaciones de siembra, riego, fertilización y plagas."},
+    {id:"formacao",titulo:"Centro de Formación Digital",desc:"Cursos gratuitos y guías prácticas en video."},
+    {id:"alertas",titulo:"Sistema de Alertas",desc:"Pronóstico del tiempo y avisos fitosanitarios."},
+  ],
+  mercado:{
+    eyebrow:"Módulo A", titulo:"Mercado Digital Agrícola",
+    sub:"Precios actualizados hoy, por región. Venta directa, sin intermediarios.",
+    buscaPlaceholder:"Buscar producto (ej: maíz, frijol...)",
+    semResultados:(b)=>`No se encontraron productos para "${b}".`,
+    estoqueLabel:"Existencias", contactar:"Contactar al vendedor",
+    niveis:{Alto:"Alto",Médio:"Medio",Baixo:"Bajo"},
+    produtos:[
+      {nome:"Maíz",unidade:"saco 50kg",regiao:"Manica",preco:950,variacao:4.2,estoque:"Alto"},
+      {nome:"Yuca",unidade:"saco 50kg",regiao:"Nampula",preco:620,variacao:-2.1,estoque:"Médio"},
+      {nome:"Frijol caupí",unidade:"saco 50kg",regiao:"Tete",preco:1450,variacao:6.8,estoque:"Baixo"},
+      {nome:"Tomate",unidade:"caja 20kg",regiao:"Maputo",preco:380,variacao:-5.4,estoque:"Alto"},
+      {nome:"Maní",unidade:"saco 50kg",regiao:"Nampula",preco:1780,variacao:1.3,estoque:"Médio"},
+      {nome:"Boniato",unidade:"saco 50kg",regiao:"Zambézia",preco:540,variacao:3.0,estoque:"Alto"},
+      {nome:"Arroz",unidade:"saco 50kg",regiao:"Gaza",preco:2100,variacao:0.5,estoque:"Médio"},
+      {nome:"Sésamo",unidade:"saco 50kg",regiao:"Cabo Delgado",preco:2650,variacao:8.9,estoque:"Baixo"},
+    ],
+  },
+  assistente:{
+    eyebrow:"Módulo B", titulo:"Asistente Inteligente Agrícola",
+    sub:"Respuestas rápidas sin conexión con buenas prácticas agrícolas.",
+    welcome:"¡Hola! Soy el Asistente Inteligente Agrícola. Pregunta sobre siembra, riego, fertilización, plagas o clima.",
+    inputPlaceholder:"Escribe tu pregunta...", send:"Enviar",
+    fallback:"Todavía no tengo una respuesta lista para eso. Intenta preguntar sobre siembra, riego, fertilización, plagas o clima — o consulta el Centro de Formación.",
+    sugestoes:["¿Cómo controlo plagas en el maíz?","¿Cuándo debo regar el tomate?","¿Qué fertilizante usar en la yuca?"],
+    tips:[
+      {kw:["plaga","gusano","insecto"],r:"Para plagas como el gusano cogollero: inspecciona las plantas semanalmente, usa trampas de feromonas y, si es necesario, aplica control biológico (ej: Bacillus thuringiensis) antes de recurrir a químicos."},
+      {kw:["riego","agua"],r:"En época seca, riega temprano en la mañana o al final de la tarde para reducir la evaporación. El riego por goteo de bajo costo ahorra hasta 40% de agua comparado con la aspersión."},
+      {kw:["fertiliz","suelo","abono"],r:"El compost orgánico (estiércol curado + restos vegetales) mejora la estructura del suelo. Aplícalo 2-3 semanas antes de sembrar y evita exceso de nitrógeno cerca de la cosecha."},
+      {kw:["clima","lluvia","sequía","tiempo"],r:"Consulta el módulo de Alertas antes de sembrar o cosechar. Si se pronostica lluvia fuerte, protege los semilleros y evita aplicar fertilizante (se lava con la lluvia)."},
+      {kw:["maíz","maiz"],r:"El maíz prefiere suelo bien drenado y sol pleno. Espacia las plantas 25-30cm y aplica fertilizante nitrogenado 3-4 semanas después de la germinación."},
+      {kw:["tomate"],r:"El tomate necesita riego regular y constante — el riego irregular causa rajaduras en el fruto. El tutorado ayuda a prevenir enfermedades fúngicas."},
+      {kw:["yuca"],r:"La yuca tolera suelos pobres, pero crece mejor con buen drenaje. Cosecha entre 8-12 meses después de la siembra, según la variedad."},
+    ],
+  },
+  formacao:{
+    eyebrow:"Módulo C", titulo:"Centro de Formación Digital",
+    sub:"Cursos cortos y gratuitos, pensados para el móvil.",
+    progresso:(c,t)=>`${c} de ${t} cursos completados`,
+    niveis:{Iniciante:"Principiante",Intermédio:"Intermedio",Avançado:"Avanzado"},
+    cursos:[
+      {titulo:"Compostaje y suelo fértil",duracao:"45 min",nivel:"Iniciante",concluido:true},
+      {titulo:"Riego por goteo de bajo costo",duracao:"1h 10min",nivel:"Intermédio",concluido:true},
+      {titulo:"Vender en el mercado digital: fotos y precios",duracao:"30 min",nivel:"Iniciante",concluido:false},
+      {titulo:"Control natural de plagas",duracao:"55 min",nivel:"Intermédio",concluido:false},
+      {titulo:"Gestión financiera para pequeños productores",duracao:"1h 20min",nivel:"Avançado",concluido:false},
+      {titulo:"Adaptación a inundaciones y sequías",duracao:"50 min",nivel:"Intermédio",concluido:false},
+    ],
+  },
+  alertas:{
+    eyebrow:"Módulo D", titulo:"Sistema de Alertas",
+    sub:"Pronóstico del tiempo y avisos fitosanitarios por región.",
+    clima:"cielo despejado · viento 12 km/h",
+    niveis:{Alto:"Alto",Médio:"Medio",Baixo:"Bajo"},
+    lista:[
+      {tipo:"Lluvia fuerte",regiao:"Zambézia",nivel:"Alto",janela:"Próximas 24h"},
+      {tipo:"Ola de calor",regiao:"Gaza",nivel:"Médio",janela:"3 días"},
+      {tipo:"Viento fuerte",regiao:"Inhambane",nivel:"Baixo",janela:"48h"},
+      {tipo:"Plaga del gusano",regiao:"Manica",nivel:"Alto",janela:"Activo ahora"},
+    ],
+  },
+  dados:{
+    eyebrow:"Módulo E", titulo:"Datos y Estadísticas",
+    sub:"Indicadores de producción, ingresos y reducción de pérdidas.",
+    chart1:"Producción mensual (toneladas)", chart2:"Ingreso medio acumulado (índice)",
+    chart3:"Pérdidas poscosecha: antes vs. después",
+    meses:["Ene","Feb","Mar","Abr","May","Jun"], anos:["Año 1","Año 2","Año 3"],
+    antesDepois:["Antes","Después"],
+  },
+  chooseLang:"Idioma",
+},
+};
+
+const PRODUCAO_VAL=[320,340,410,460,505,540], RENDA_VAL=[100,118,131], PERDAS_VAL=[100,75];
+
+/* ======================= ESTADO ======================= */
+let state = {
+  lang: localStorage.getItem("agrosmart_lang") || "pt",
+  page: "inicio",
+  menuOpen: false,
+  langMenuOpen: false,
+  busca: "",
+  chat: [],
+  cursos: null, // preenchido por idioma na 1ª renderização
+};
+
+function t(){ return T[state.lang]; }
+function setLang(l){ state.lang = l; localStorage.setItem("agrosmart_lang", l); state.langMenuOpen=false; state.chat=[]; render(); }
+function setPage(p){ state.page = p; state.menuOpen=false; window.scrollTo({top:0,behavior:"smooth"}); render(); }
+
+/* ======================= RENDER: HEADER ======================= */
+function renderHeader(){
+  const T_ = t();
+  const ids = ["inicio",...MODULE_ORDER,"dados"];
+  return `
+  <header>
+    <div class="logo">${MODULE_ICON.inicio} AgroSmart Connect</div>
+    <nav class="desktop">
+      ${ids.map(id=>`<button class="${state.page===id?'active':''}" onclick="setPage('${id}')">${MODULE_ICON[id]} ${T_.nav[id]}</button>`).join("")}
+    </nav>
+    <div class="header-right">
+      <div class="lang-wrap">
+        <button class="lang-btn" onclick="state.langMenuOpen=!state.langMenuOpen;render()">🌐 ${LANGS.find(l=>l.code===state.lang).short}</button>
+        <div class="lang-menu ${state.langMenuOpen?'open':''}">
+          ${LANGS.map(l=>`<button class="${l.code===state.lang?'active':''}" onclick="setLang('${l.code}')">${l.label} ${l.code===state.lang?'✓':''}</button>`).join("")}
+        </div>
+      </div>
+      <button class="mobile-toggle" onclick="state.menuOpen=!state.menuOpen;render()">${state.menuOpen?'✕':'☰'}</button>
+    </div>
+  </header>
+  <nav class="mobile ${state.menuOpen?'open':''}">
+    ${ids.map(id=>`<button class="${state.page===id?'active':''}" onclick="setPage('${id}')">${MODULE_ICON[id]} ${T_.nav[id]}</button>`).join("")}
+  </nav>`;
+}
+
+/* ======================= RENDER: PÁGINAS ======================= */
+function renderInicio(){
+  const T_ = t();
+  return `
+  <div class="hero">
+    <div class="eyebrow light">${T_.hero.eyebrow}</div>
+    <h1>${T_.hero.headline}</h1>
+    <p>${T_.hero.sub}</p>
+    <div class="ctas">
+      <button class="btn-primary" onclick="setPage('mercado')">${T_.hero.ctaMercado} →</button>
+      <button class="btn-secondary" onclick="setPage('assistente')">${T_.hero.ctaAssistente}</button>
+    </div>
+  </div>
+  <div class="stats">
+    ${["👥","📈","🍃","🎓"].map((ic,i)=>`
+      <div class="stat-card"><div class="icon">${ic}</div>
+        <div class="value">${T_.stats[i][0]}</div>
+        <div class="label">${T_.stats[i][1]}</div>
+      </div>`).join("")}
+  </div>
+  <div class="eyebrow">${T_.modulesTitle}</div>
+  <div class="module-grid">
+    ${T_.modules.map((m,i)=>`
+      <button class="module-card" onclick="setPage('${m.id}')">
+        <div class="ic">${MODULE_ICON[m.id]}</div>
+        <div><div class="title">${m.titulo}</div><div class="desc">${m.desc}</div></div>
+      </button>`).join("")}
+  </div>`;
+}
+
+function renderMercado(){
+  const T_ = t().mercado;
+  const filtrados = T_.produtos.filter(p=>p.nome.toLowerCase().includes(state.busca.toLowerCase()));
+  return `
+  <div class="eyebrow">${T_.eyebrow}</div>
+  <h2 class="page-title">${T_.titulo}</h2>
+  <p class="page-sub">${T_.sub}</p>
+  <div class="search-box">🔍 <input id="busca-input" placeholder="${T_.buscaPlaceholder}" value="${state.busca}" oninput="state.busca=this.value;render();setTimeout(()=>{const el=document.getElementById('busca-input');if(el){el.focus();el.selectionStart=el.selectionEnd=el.value.length;}},0)" /></div>
+  <div class="grid-3">
+    ${filtrados.map(p=>`
+      <div class="product-card">
+        <div class="top"><div class="pname">${p.nome}</div>
+          <span class="pill" style="background:${p.variacao>=0?'#2E7D3222':'#C0392B22'};color:${p.variacao>=0?'#2E7D32':'#C0392B'}">${p.variacao>=0?'▲':'▼'} ${Math.abs(p.variacao)}%</span>
+        </div>
+        <div class="punit">${p.unidade}</div>
+        <div class="pprice">${p.preco.toLocaleString('pt-PT')} <small>MT</small></div>
+        <div class="pmeta"><span>📍 ${p.regiao}</span><span>${T_.estoqueLabel}: ${T_.niveis[p.estoque]}</span></div>
+        <button class="pbtn">${T_.contactar}</button>
+      </div>`).join("") || `<div class="empty">${T_.semResultados(state.busca)}</div>`}
+  </div>`;
+}
+
+function findTip(query){
+  const T_ = t().assistente;
+  const q = query.toLowerCase();
+  for(const tip of T_.tips){ if(tip.kw.some(k=>q.includes(k))) return tip.r; }
+  return T_.fallback;
+}
+
+function renderAssistente(){
+  const T_ = t().assistente;
+  if(state.chat.length===0) state.chat=[{role:"bot",text:T_.welcome}];
+  return `
+  <div class="eyebrow">${T_.eyebrow}</div>
+  <h2 class="page-title">${T_.titulo}</h2>
+  <p class="page-sub">${T_.sub}</p>
+  <div class="chat-wrap">
+    <div class="chat-box" id="chat-box">
+      ${state.chat.map(m=>`<div class="bubble ${m.role==='user'?'user':'bot'}">${m.text}</div>`).join("")}
+    </div>
+    ${state.chat.length<2?`<div class="suggestions">${T_.sugestoes.map(s=>`<button class="sugg" onclick="sendChat('${s.replace(/'/g,"\\'")}')">${s}</button>`).join("")}</div>`:""}
+    <div class="chat-input">
+      <input id="chat-input" placeholder="${T_.inputPlaceholder}" onkeydown="if(event.key==='Enter')sendChat(this.value)" />
+      <button onclick="sendChat(document.getElementById('chat-input').value)">➤</button>
+    </div>
+  </div>`;
+}
+function sendChat(text){
+  text = (text||"").trim();
+  if(!text) return;
+  state.chat.push({role:"user",text});
+  state.chat.push({role:"bot",text:findTip(text)});
+  render();
+  const box=document.getElementById('chat-box');
+  if(box) box.scrollTop = box.scrollHeight;
+  const input=document.getElementById('chat-input');
+  if(input) input.value="";
+}
+
+function renderFormacao(){
+  const T_ = t().formacao;
+  const done = T_.cursos.filter(c=>c.concluido).length;
+  const corNivel = {Iniciante:"#2E7D32",Intermédio:"#B7791F",Avançado:"#C0392B"};
+  return `
+  <div class="eyebrow">${T_.eyebrow}</div>
+  <h2 class="page-title">${T_.titulo}</h2>
+  <p class="page-sub" style="margin-bottom:6px">${T_.sub}</p>
+  <div class="progress-txt">${T_.progresso(done,T_.cursos.length)}</div>
+  <div class="grid-3" style="grid-template-columns:repeat(auto-fit,minmax(260px,1fr))">
+    ${T_.cursos.map(c=>`
+      <div class="course-card">
+        <div>${c.concluido?'✅':'▶️'}</div>
+        <div><div class="title">${c.titulo}</div>
+          <div class="meta"><span>${c.duracao}</span><span>·</span>
+          <span class="pill" style="background:${corNivel[c.nivel]}22;color:${corNivel[c.nivel]}">${T_.niveis[c.nivel]}</span></div>
+        </div>
+      </div>`).join("")}
+  </div>`;
+}
+
+function renderAlertas(){
+  const T_ = t().alertas;
+  return `
+  <div class="eyebrow">${T_.eyebrow}</div>
+  <h2 class="page-title">${T_.titulo}</h2>
+  <p class="page-sub">${T_.sub}</p>
+  <div class="weather-card">☀️ <div><div class="temp">29°C</div><div style="color:var(--muted);font-size:.85rem">Maputo · ${T_.clima}</div></div></div>
+  <div class="grid-3" style="grid-template-columns:repeat(auto-fit,minmax(260px,1fr))">
+    ${T_.lista.map((a,i)=>`
+      <div class="alert-card">
+        <div class="ic" style="background:${ALERT_COLOR[i]}22">${ALERT_ICON[i]}</div>
+        <div style="flex:1">
+          <div class="alert-top"><div class="title" style="font-weight:600">${a.tipo}</div>
+            <span class="pill" style="background:${ALERT_COLOR[i]}22;color:${ALERT_COLOR[i]}">${T_.niveis[a.nivel]}</span></div>
+          <div class="alert-meta"><span>📍 ${a.regiao}</span><span>· ${a.janela}</span></div>
+        </div>
+      </div>`).join("")}
+  </div>`;
+}
+
+function renderDados(){
+  const T_ = t().dados;
+  return `
+  <div class="eyebrow">${T_.eyebrow}</div>
+  <h2 class="page-title">${T_.titulo}</h2>
+  <p class="page-sub">${T_.sub}</p>
+  <div class="dados-grid">
+    <div class="chart-card"><div class="ctitle">${T_.chart1}</div><canvas id="chart1" height="200"></canvas></div>
+    <div class="chart-card"><div class="ctitle">${T_.chart2}</div><canvas id="chart2" height="200"></canvas></div>
+    <div class="chart-card span2"><div class="ctitle">${T_.chart3}</div><canvas id="chart3" height="160"></canvas></div>
+  </div>`;
+}
+let chartInstances = [];
+function drawCharts(){
+  if(typeof Chart==="undefined") return;
+  chartInstances.forEach(c=>c.destroy()); chartInstances=[];
+  const T_ = t().dados;
+  const c1 = document.getElementById('chart1');
+  if(c1) chartInstances.push(new Chart(c1,{type:'line',data:{labels:T_.meses,datasets:[{data:PRODUCAO_VAL,borderColor:'#0077D4',backgroundColor:'#0077D422',tension:.35,fill:true}]},options:{plugins:{legend:{display:false}},scales:{y:{beginAtZero:false}}}}));
+  const c2 = document.getElementById('chart2');
+  if(c2) chartInstances.push(new Chart(c2,{type:'bar',data:{labels:T_.anos,datasets:[{data:RENDA_VAL,backgroundColor:'#00579B',borderRadius:6}]},options:{plugins:{legend:{display:false}}}}));
+  const c3 = document.getElementById('chart3');
+  if(c3) chartInstances.push(new Chart(c3,{type:'pie',data:{labels:T_.antesDepois,datasets:[{data:PERDAS_VAL,backgroundColor:PERDA_COLOR}]},options:{plugins:{legend:{position:'bottom'}}}}));
+}
+
+/* ======================= APP ROOT ======================= */
+function render(){
+  const T_ = t();
+  let body="";
+  if(state.page==="inicio") body = renderInicio();
+  else if(state.page==="mercado") body = renderMercado();
+  else if(state.page==="assistente") body = renderAssistente();
+  else if(state.page==="formacao") body = renderFormacao();
+  else if(state.page==="alertas") body = renderAlertas();
+  else if(state.page==="dados") body = renderDados();
+
+  document.getElementById("app").innerHTML = `
+    ${renderHeader()}
+    <main>${body}</main>
+    <footer>${T_.footer}</footer>
+  `;
+  document.documentElement.lang = state.lang;
+  if(state.page==="dados") setTimeout(drawCharts, 30);
+  const chatBox = document.getElementById('chat-box');
+  if(chatBox) chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+document.addEventListener("click",(e)=>{
+  if(!e.target.closest(".lang-wrap") && state.langMenuOpen){ state.langMenuOpen=false; render(); }
+});
+
+render();
+
+if("serviceWorker" in navigator){
+  window.addEventListener("load",()=>{
+    navigator.serviceWorker.register("sw.js").catch(()=>{});
+  });
+}
+</script>
+</body>
+</html>
