@@ -26,7 +26,7 @@
   .logo{display:flex;align-items:center;gap:8px;font-weight:600;color:#fff;font-size:1.05rem;}
   nav.desktop{display:none;gap:2px;}
   @media(min-width:820px){ nav.desktop{display:flex;} .mobile-toggle{display:none;} }
-  nav.desktop button{display:flex;align-items:center;gap:6px;padding:9px 14px;border-radius:8px;font-size:.9rem;
+  nav.desktop button{display:flex;align-items:center;gap:5px;padding:8px 10px;border-radius:8px;font-size:.82rem;
     font-weight:500;background:transparent;color:#D6E9FB;border:none;cursor:pointer;transition:.15s;}
   nav.desktop button.active{background:#FFFFFF33;color:#fff;}
   .mobile-toggle{background:none;border:none;font-size:1.4rem;color:#fff;cursor:pointer;}
@@ -136,15 +136,15 @@ const LANGS = [
   { code:"es", label:"Español", short:"ES" },
 ];
 
-const MODULE_ORDER = ["mercado","assistente","formacao","alertas"];
-const MODULE_ICON = { inicio:"🌱", mercado:"🛒", assistente:"🤖", formacao:"🎓", alertas:"⛈️", dados:"📊" };
+const MODULE_ORDER = ["mercado","transporte","especialistas","assistente","formacao","alertas"];
+const MODULE_ICON = { inicio:"🌱", mercado:"🛒", transporte:"🚚", especialistas:"🤝", assistente:"🤖", formacao:"🎓", alertas:"⛈️", dados:"📊" };
 const ALERT_ICON = ["🌧️","🌡️","💨","🐛"];
 const ALERT_COLOR = ["#0077D4","#B7791F","#2E7D32","#C0392B"];
 const PERDA_COLOR = ["#C0392B","#0077D4"];
 
 const T = {
 pt: {
-  nav:{inicio:"Início",mercado:"Mercado",assistente:"Assistente",formacao:"Formação",alertas:"Alertas",dados:"Dados"},
+  nav:{inicio:"Início",mercado:"Mercado",transporte:"Transporte",especialistas:"Especialistas",assistente:"Assistente",formacao:"Formação",alertas:"Alertas",dados:"Dados"},
   footer:"AgroSmart Connect · Protótipo para UNESCO Youth Hackathon 2026",
   hero:{
     eyebrow:"Boletim do Agricultor · Edição de hoje",
@@ -156,6 +156,8 @@ pt: {
   modulesTitle:"Módulos da plataforma",
   modules:[
     {id:"mercado",titulo:"Mercado Digital Agrícola",desc:"Venda direta, catálogo e preços atualizados diariamente."},
+    {id:"transporte",titulo:"Transporte de Mercadorias",desc:"Ligação entre a zona rural e o ponto de venda, com preços."},
+    {id:"especialistas",titulo:"Rede de Especialistas",desc:"Agrónomos e técnicos por cultura, com formação e experiência."},
     {id:"assistente",titulo:"Assistente Inteligente Agrícola",desc:"Recomendações de plantio, irrigação, fertilização e pragas."},
     {id:"formacao",titulo:"Centro de Formação Digital",desc:"Cursos gratuitos e guias práticos em vídeo."},
     {id:"alertas",titulo:"Sistema de Alertas",desc:"Previsão meteorológica e avisos fitossanitários."},
@@ -176,6 +178,36 @@ pt: {
       {nome:"Batata-doce",unidade:"saco 50kg",regiao:"Zambézia",preco:540,variacao:3.0,estoque:"Alto"},
       {nome:"Arroz",unidade:"saco 50kg",regiao:"Gaza",preco:2100,variacao:0.5,estoque:"Médio"},
       {nome:"Gergelim",unidade:"saco 50kg",regiao:"Cabo Delgado",preco:2650,variacao:8.9,estoque:"Baixo"},
+    ],
+  },
+  transporte:{
+    eyebrow:"Módulo F", titulo:"Transporte de Mercadorias",
+    sub:"Ligue a sua colheita na zona rural ao ponto de venda — com preços claros por rota.",
+    buscaPlaceholder:"Procurar por origem ou destino...",
+    semResultados:(b)=>`Nenhuma rota encontrada para "${b}".`,
+    precoLabel:"por kg", tempoLabel:"Tempo estimado", solicitar:"Solicitar transporte",
+    lista:[
+      {transportador:"Transportes Manica Rural",origem:"Manica",destino:"Chimoio · Mercado Central",veiculo:"Camião 5 t",preco:25,tempo:"2h",avaliacao:4.8},
+      {transportador:"Boleia Agrícola Zambézia",origem:"Gurué",destino:"Quelimane · Mercado Municipal",veiculo:"Carrinha 2 t",preco:30,tempo:"3h30",avaliacao:4.6},
+      {transportador:"Moto-Carga Nampula",origem:"Ribáuè",destino:"Nampula Cidade",veiculo:"Moto-táxi de carga · 300 kg",preco:45,tempo:"1h",avaliacao:4.5},
+      {transportador:"Transportes Tete Sul",origem:"Angónia",destino:"Tete Cidade",veiculo:"Camião 8 t",preco:20,tempo:"4h",avaliacao:4.7},
+      {transportador:"Rede Rural Gaza",origem:"Chókwè",destino:"Xai-Xai · Mercado Central",veiculo:"Carrinha 3 t",preco:28,tempo:"2h30",avaliacao:4.4},
+      {transportador:"Cooperativa Inhambane Norte",origem:"Massinga",destino:"Inhambane Cidade",veiculo:"Camião 4 t",preco:22,tempo:"3h",avaliacao:4.9},
+    ],
+  },
+  especialistas:{
+    eyebrow:"Módulo G", titulo:"Rede de Especialistas",
+    sub:"Agrónomos, técnicos e veterinários por cultura e sistema — formação, experiência e contacto direto.",
+    buscaPlaceholder:"Procurar por especialidade (ex: irrigação, pecuária...)",
+    semResultados:(b)=>`Nenhum especialista encontrado para "${b}".`,
+    formacaoLabel:"Formação", experienciaLabel:"Experiência", conexoesLabel:"conexões", conectar:"Conectar",
+    lista:[
+      {nome:"Amélia Chissano",especialidade:"Milho e Cereais",formacao:"Eng.ª Agrónoma · UEM",experiencia:"12 anos de experiência",regiao:"Manica",conexoes:340,iniciais:"AC"},
+      {nome:"Domingos Ubisse",especialidade:"Sistemas de Irrigação",formacao:"Téc. Superior em Hidráulica Agrícola",experiencia:"8 anos de experiência",regiao:"Gaza",conexoes:210,iniciais:"DU"},
+      {nome:"Ana Paula Nhantumbo",especialidade:"Solo e Compostagem",formacao:"Mestre em Ciência do Solo",experiencia:"15 anos de experiência",regiao:"Zambézia",conexoes:512,iniciais:"AN"},
+      {nome:"Carlos Machava",especialidade:"Controlo de Pragas",formacao:"Eng. Agrónomo · ISPM",experiencia:"9 anos de experiência",regiao:"Nampula",conexoes:178,iniciais:"CM"},
+      {nome:"Fátima Cossa",especialidade:"Pecuária e Veterinária",formacao:"Médica Veterinária · UEM",experiencia:"11 anos de experiência",regiao:"Inhambane",conexoes:265,iniciais:"FC"},
+      {nome:"Ernesto Tembe",especialidade:"Culturas Hortícolas",formacao:"Técnico Agrícola · IIAM",experiencia:"6 anos de experiência",regiao:"Maputo",conexoes:143,iniciais:"ET"},
     ],
   },
   assistente:{
@@ -233,7 +265,7 @@ pt: {
 },
 
 en: {
-  nav:{inicio:"Home",mercado:"Market",assistente:"Assistant",formacao:"Training",alertas:"Alerts",dados:"Data"},
+  nav:{inicio:"Home",mercado:"Market",transporte:"Transport",especialistas:"Experts",assistente:"Assistant",formacao:"Training",alertas:"Alerts",dados:"Data"},
   footer:"AgroSmart Connect · Prototype for the UNESCO Youth Hackathon 2026",
   hero:{
     eyebrow:"The Farmer's Bulletin · Today's edition",
@@ -245,6 +277,8 @@ en: {
   modulesTitle:"Platform modules",
   modules:[
     {id:"mercado",titulo:"Digital Farming Marketplace",desc:"Direct sales, catalog and daily updated prices."},
+    {id:"transporte",titulo:"Goods Transport",desc:"Connecting rural areas to the point of sale, with pricing."},
+    {id:"especialistas",titulo:"Expert Network",desc:"Agronomists and technicians by crop, with training and experience."},
     {id:"assistente",titulo:"Smart Farming Assistant",desc:"Recommendations on planting, irrigation, fertilizing and pests."},
     {id:"formacao",titulo:"Digital Training Center",desc:"Free courses and practical video guides."},
     {id:"alertas",titulo:"Alert System",desc:"Weather forecasts and plant-health warnings."},
@@ -265,6 +299,36 @@ en: {
       {nome:"Sweet potato",unidade:"50kg bag",regiao:"Zambézia",preco:540,variacao:3.0,estoque:"Alto"},
       {nome:"Rice",unidade:"50kg bag",regiao:"Gaza",preco:2100,variacao:0.5,estoque:"Médio"},
       {nome:"Sesame",unidade:"50kg bag",regiao:"Cabo Delgado",preco:2650,variacao:8.9,estoque:"Baixo"},
+    ],
+  },
+  transporte:{
+    eyebrow:"Module F", titulo:"Goods Transport",
+    sub:"Connect your rural harvest to the point of sale — with clear per-route pricing.",
+    buscaPlaceholder:"Search by origin or destination...",
+    semResultados:(b)=>`No routes found for "${b}".`,
+    precoLabel:"per kg", tempoLabel:"Estimated time", solicitar:"Request transport",
+    lista:[
+      {transportador:"Manica Rural Transport",origem:"Manica",destino:"Chimoio · Central Market",veiculo:"5-ton truck",preco:25,tempo:"2h",avaliacao:4.8},
+      {transportador:"Zambézia Farm Carriers",origem:"Gurué",destino:"Quelimane · Municipal Market",veiculo:"2-ton van",preco:30,tempo:"3h30",avaliacao:4.6},
+      {transportador:"Nampula Moto-Cargo",origem:"Ribáuè",destino:"Nampula City",veiculo:"Cargo motorcycle · 300 kg",preco:45,tempo:"1h",avaliacao:4.5},
+      {transportador:"Tete South Transport",origem:"Angónia",destino:"Tete City",veiculo:"8-ton truck",preco:20,tempo:"4h",avaliacao:4.7},
+      {transportador:"Gaza Rural Network",origem:"Chókwè",destino:"Xai-Xai · Central Market",veiculo:"3-ton van",preco:28,tempo:"2h30",avaliacao:4.4},
+      {transportador:"North Inhambane Cooperative",origem:"Massinga",destino:"Inhambane City",veiculo:"4-ton truck",preco:22,tempo:"3h",avaliacao:4.9},
+    ],
+  },
+  especialistas:{
+    eyebrow:"Module G", titulo:"Expert Network",
+    sub:"Agronomists, technicians and vets by crop and system — training, experience and direct contact.",
+    buscaPlaceholder:"Search by specialty (e.g. irrigation, livestock...)",
+    semResultados:(b)=>`No experts found for "${b}".`,
+    formacaoLabel:"Education", experienciaLabel:"Experience", conexoesLabel:"connections", conectar:"Connect",
+    lista:[
+      {nome:"Amélia Chissano",especialidade:"Maize and Cereals",formacao:"Agronomy Eng. · UEM",experiencia:"12 years of experience",regiao:"Manica",conexoes:340,iniciais:"AC"},
+      {nome:"Domingos Ubisse",especialidade:"Irrigation Systems",formacao:"Senior Technician, Agricultural Hydraulics",experiencia:"8 years of experience",regiao:"Gaza",conexoes:210,iniciais:"DU"},
+      {nome:"Ana Paula Nhantumbo",especialidade:"Soil and Composting",formacao:"MSc in Soil Science",experiencia:"15 years of experience",regiao:"Zambézia",conexoes:512,iniciais:"AN"},
+      {nome:"Carlos Machava",especialidade:"Pest Control",formacao:"Agronomy Eng. · ISPM",experiencia:"9 years of experience",regiao:"Nampula",conexoes:178,iniciais:"CM"},
+      {nome:"Fátima Cossa",especialidade:"Livestock and Veterinary",formacao:"Veterinarian · UEM",experiencia:"11 years of experience",regiao:"Inhambane",conexoes:265,iniciais:"FC"},
+      {nome:"Ernesto Tembe",especialidade:"Horticultural Crops",formacao:"Agricultural Technician · IIAM",experiencia:"6 years of experience",regiao:"Maputo",conexoes:143,iniciais:"ET"},
     ],
   },
   assistente:{
@@ -322,7 +386,7 @@ en: {
 },
 
 fr: {
-  nav:{inicio:"Accueil",mercado:"Marché",assistente:"Assistant",formacao:"Formation",alertas:"Alertes",dados:"Données"},
+  nav:{inicio:"Accueil",mercado:"Marché",transporte:"Transport",especialistas:"Experts",assistente:"Assistant",formacao:"Formation",alertas:"Alertes",dados:"Données"},
   footer:"AgroSmart Connect · Prototype pour le UNESCO Youth Hackathon 2026",
   hero:{
     eyebrow:"Le Bulletin du Paysan · Édition du jour",
@@ -334,6 +398,8 @@ fr: {
   modulesTitle:"Modules de la plateforme",
   modules:[
     {id:"mercado",titulo:"Marché Numérique Agricole",desc:"Vente directe, catalogue et prix mis à jour chaque jour."},
+    {id:"transporte",titulo:"Transport de Marchandises",desc:"Lien entre la zone rurale et le point de vente, avec les prix."},
+    {id:"especialistas",titulo:"Réseau d'Experts",desc:"Agronomes et techniciens par culture, avec formation et expérience."},
     {id:"assistente",titulo:"Assistant Agricole Intelligent",desc:"Recommandations sur la plantation, l'irrigation, la fertilisation et les nuisibles."},
     {id:"formacao",titulo:"Centre de Formation Numérique",desc:"Cours gratuits et guides vidéo pratiques."},
     {id:"alertas",titulo:"Système d'Alertes",desc:"Prévisions météo et avis phytosanitaires."},
@@ -354,6 +420,36 @@ fr: {
       {nome:"Patate douce",unidade:"sac de 50kg",regiao:"Zambézia",preco:540,variacao:3.0,estoque:"Alto"},
       {nome:"Riz",unidade:"sac de 50kg",regiao:"Gaza",preco:2100,variacao:0.5,estoque:"Médio"},
       {nome:"Sésame",unidade:"sac de 50kg",regiao:"Cabo Delgado",preco:2650,variacao:8.9,estoque:"Baixo"},
+    ],
+  },
+  transporte:{
+    eyebrow:"Module F", titulo:"Transport de Marchandises",
+    sub:"Reliez votre récolte en zone rurale au point de vente — avec des prix clairs par trajet.",
+    buscaPlaceholder:"Rechercher par origine ou destination...",
+    semResultados:(b)=>`Aucun trajet trouvé pour « ${b} ».`,
+    precoLabel:"par kg", tempoLabel:"Durée estimée", solicitar:"Demander le transport",
+    lista:[
+      {transportador:"Transports Ruraux Manica",origem:"Manica",destino:"Chimoio · Marché Central",veiculo:"Camion 5 t",preco:25,tempo:"2h",avaliacao:4.8},
+      {transportador:"Transporteurs Agricoles Zambézia",origem:"Gurué",destino:"Quelimane · Marché Municipal",veiculo:"Camionnette 2 t",preco:30,tempo:"3h30",avaliacao:4.6},
+      {transportador:"Moto-Cargo Nampula",origem:"Ribáuè",destino:"Ville de Nampula",veiculo:"Moto-cargo · 300 kg",preco:45,tempo:"1h",avaliacao:4.5},
+      {transportador:"Transports Tete Sud",origem:"Angónia",destino:"Ville de Tete",veiculo:"Camion 8 t",preco:20,tempo:"4h",avaliacao:4.7},
+      {transportador:"Réseau Rural Gaza",origem:"Chókwè",destino:"Xai-Xai · Marché Central",veiculo:"Camionnette 3 t",preco:28,tempo:"2h30",avaliacao:4.4},
+      {transportador:"Coopérative Inhambane Nord",origem:"Massinga",destino:"Ville d'Inhambane",veiculo:"Camion 4 t",preco:22,tempo:"3h",avaliacao:4.9},
+    ],
+  },
+  especialistas:{
+    eyebrow:"Module G", titulo:"Réseau d'Experts",
+    sub:"Agronomes, techniciens et vétérinaires par culture et système — formation, expérience et contact direct.",
+    buscaPlaceholder:"Rechercher par spécialité (ex : irrigation, élevage...)",
+    semResultados:(b)=>`Aucun expert trouvé pour « ${b} ».`,
+    formacaoLabel:"Formation", experienciaLabel:"Expérience", conexoesLabel:"connexions", conectar:"Se connecter",
+    lista:[
+      {nome:"Amélia Chissano",especialidade:"Maïs et Céréales",formacao:"Ingénieure Agronome · UEM",experiencia:"12 ans d'expérience",regiao:"Manica",conexoes:340,iniciais:"AC"},
+      {nome:"Domingos Ubisse",especialidade:"Systèmes d'Irrigation",formacao:"Technicien Supérieur en Hydraulique Agricole",experiencia:"8 ans d'expérience",regiao:"Gaza",conexoes:210,iniciais:"DU"},
+      {nome:"Ana Paula Nhantumbo",especialidade:"Sol et Compostage",formacao:"Master en Science du Sol",experiencia:"15 ans d'expérience",regiao:"Zambézia",conexoes:512,iniciais:"AN"},
+      {nome:"Carlos Machava",especialidade:"Lutte Antiparasitaire",formacao:"Ingénieur Agronome · ISPM",experiencia:"9 ans d'expérience",regiao:"Nampula",conexoes:178,iniciais:"CM"},
+      {nome:"Fátima Cossa",especialidade:"Élevage et Vétérinaire",formacao:"Vétérinaire · UEM",experiencia:"11 ans d'expérience",regiao:"Inhambane",conexoes:265,iniciais:"FC"},
+      {nome:"Ernesto Tembe",especialidade:"Cultures Maraîchères",formacao:"Technicien Agricole · IIAM",experiencia:"6 ans d'expérience",regiao:"Maputo",conexoes:143,iniciais:"ET"},
     ],
   },
   assistente:{
@@ -411,7 +507,7 @@ fr: {
 },
 
 es: {
-  nav:{inicio:"Inicio",mercado:"Mercado",assistente:"Asistente",formacao:"Formación",alertas:"Alertas",dados:"Datos"},
+  nav:{inicio:"Inicio",mercado:"Mercado",transporte:"Transporte",especialistas:"Expertos",assistente:"Asistente",formacao:"Formación",alertas:"Alertas",dados:"Datos"},
   footer:"AgroSmart Connect · Prototipo para el UNESCO Youth Hackathon 2026",
   hero:{
     eyebrow:"El Boletín del Agricultor · Edición de hoy",
@@ -423,6 +519,8 @@ es: {
   modulesTitle:"Módulos de la plataforma",
   modules:[
     {id:"mercado",titulo:"Mercado Digital Agrícola",desc:"Venta directa, catálogo y precios actualizados a diario."},
+    {id:"transporte",titulo:"Transporte de Mercancías",desc:"Conexión entre la zona rural y el punto de venta, con precios."},
+    {id:"especialistas",titulo:"Red de Especialistas",desc:"Agrónomos y técnicos por cultivo, con formación y experiencia."},
     {id:"assistente",titulo:"Asistente Inteligente Agrícola",desc:"Recomendaciones de siembra, riego, fertilización y plagas."},
     {id:"formacao",titulo:"Centro de Formación Digital",desc:"Cursos gratuitos y guías prácticas en video."},
     {id:"alertas",titulo:"Sistema de Alertas",desc:"Pronóstico del tiempo y avisos fitosanitarios."},
@@ -443,6 +541,36 @@ es: {
       {nome:"Boniato",unidade:"saco 50kg",regiao:"Zambézia",preco:540,variacao:3.0,estoque:"Alto"},
       {nome:"Arroz",unidade:"saco 50kg",regiao:"Gaza",preco:2100,variacao:0.5,estoque:"Médio"},
       {nome:"Sésamo",unidade:"saco 50kg",regiao:"Cabo Delgado",preco:2650,variacao:8.9,estoque:"Baixo"},
+    ],
+  },
+  transporte:{
+    eyebrow:"Módulo F", titulo:"Transporte de Mercancías",
+    sub:"Conecta tu cosecha en la zona rural con el punto de venta — con precios claros por ruta.",
+    buscaPlaceholder:"Buscar por origen o destino...",
+    semResultados:(b)=>`No se encontraron rutas para "${b}".`,
+    precoLabel:"por kg", tempoLabel:"Tiempo estimado", solicitar:"Solicitar transporte",
+    lista:[
+      {transportador:"Transportes Manica Rural",origem:"Manica",destino:"Chimoio · Mercado Central",veiculo:"Camión 5 t",preco:25,tempo:"2h",avaliacao:4.8},
+      {transportador:"Transportistas Agrícolas Zambézia",origem:"Gurué",destino:"Quelimane · Mercado Municipal",veiculo:"Furgoneta 2 t",preco:30,tempo:"3h30",avaliacao:4.6},
+      {transportador:"Moto-Carga Nampula",origem:"Ribáuè",destino:"Ciudad de Nampula",veiculo:"Motocarga · 300 kg",preco:45,tempo:"1h",avaliacao:4.5},
+      {transportador:"Transportes Tete Sur",origem:"Angónia",destino:"Ciudad de Tete",veiculo:"Camión 8 t",preco:20,tempo:"4h",avaliacao:4.7},
+      {transportador:"Red Rural Gaza",origem:"Chókwè",destino:"Xai-Xai · Mercado Central",veiculo:"Furgoneta 3 t",preco:28,tempo:"2h30",avaliacao:4.4},
+      {transportador:"Cooperativa Inhambane Norte",origem:"Massinga",destino:"Ciudad de Inhambane",veiculo:"Camión 4 t",preco:22,tempo:"3h",avaliacao:4.9},
+    ],
+  },
+  especialistas:{
+    eyebrow:"Módulo G", titulo:"Red de Especialistas",
+    sub:"Agrónomos, técnicos y veterinarios por cultivo y sistema — formación, experiencia y contacto directo.",
+    buscaPlaceholder:"Buscar por especialidad (ej: riego, ganadería...)",
+    semResultados:(b)=>`No se encontraron especialistas para "${b}".`,
+    formacaoLabel:"Formación", experienciaLabel:"Experiencia", conexoesLabel:"conexiones", conectar:"Conectar",
+    lista:[
+      {nome:"Amélia Chissano",especialidade:"Maíz y Cereales",formacao:"Ing.ª Agrónoma · UEM",experiencia:"12 años de experiencia",regiao:"Manica",conexoes:340,iniciais:"AC"},
+      {nome:"Domingos Ubisse",especialidade:"Sistemas de Riego",formacao:"Téc. Superior en Hidráulica Agrícola",experiencia:"8 años de experiencia",regiao:"Gaza",conexoes:210,iniciais:"DU"},
+      {nome:"Ana Paula Nhantumbo",especialidade:"Suelo y Compostaje",formacao:"Máster en Ciencia del Suelo",experiencia:"15 años de experiencia",regiao:"Zambézia",conexoes:512,iniciais:"AN"},
+      {nome:"Carlos Machava",especialidade:"Control de Plagas",formacao:"Ing. Agrónomo · ISPM",experiencia:"9 años de experiencia",regiao:"Nampula",conexoes:178,iniciais:"CM"},
+      {nome:"Fátima Cossa",especialidade:"Ganadería y Veterinaria",formacao:"Veterinaria · UEM",experiencia:"11 años de experiencia",regiao:"Inhambane",conexoes:265,iniciais:"FC"},
+      {nome:"Ernesto Tembe",especialidade:"Cultivos Hortícolas",formacao:"Técnico Agrícola · IIAM",experiencia:"6 años de experiencia",regiao:"Maputo",conexoes:143,iniciais:"ET"},
     ],
   },
   assistente:{
@@ -594,6 +722,72 @@ function renderMercado(){
   </div>`;
 }
 
+function renderTransporte(){
+  const T_ = t().transporte;
+  const q = (state.buscaTransporte||"").toLowerCase();
+  const filtradas = T_.lista.filter(r=>r.origem.toLowerCase().includes(q)||r.destino.toLowerCase().includes(q));
+  return `
+  <div class="eyebrow">${T_.eyebrow}</div>
+  <h2 class="page-title">${T_.titulo}</h2>
+  <p class="page-sub">${T_.sub}</p>
+  <div class="search-box">🔍 <input id="busca-transporte-input" placeholder="${T_.buscaPlaceholder}" value="${state.buscaTransporte||''}" oninput="state.buscaTransporte=this.value;render();setTimeout(()=>{const el=document.getElementById('busca-transporte-input');if(el){el.focus();el.selectionStart=el.selectionEnd=el.value.length;}},0)" /></div>
+  <div class="grid-3" style="grid-template-columns:repeat(auto-fit,minmax(320px,1fr))">
+    ${filtradas.map(r=>`
+      <div class="product-card">
+        <div class="top">
+          <div style="display:flex;align-items:center;gap:8px">
+            <span style="font-size:1.1rem">🚚</span>
+            <div class="pname">${r.transportador}</div>
+          </div>
+          <span style="font-size:.78rem;font-weight:700;color:#B7791F">★ ${r.avaliacao}</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;margin-top:10px;font-size:.9rem;color:var(--ink)">
+          <span style="font-weight:600">${r.origem}</span> → <span style="font-weight:600">${r.destino}</span>
+        </div>
+        <div class="punit">${r.veiculo}</div>
+        <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-top:14px">
+          <div>
+            <div class="pprice">${r.preco} MT <small>${T_.precoLabel}</small></div>
+            <div style="font-size:.75rem;color:var(--muted);margin-top:2px">${T_.tempoLabel}: ${r.tempo}</div>
+          </div>
+        </div>
+        <button class="pbtn" style="margin-top:12px">${T_.solicitar}</button>
+      </div>`).join("") || `<div class="empty">${T_.semResultados(state.buscaTransporte||"")}</div>`}
+  </div>`;
+}
+
+function renderEspecialistas(){
+  const T_ = t().especialistas;
+  const q = (state.buscaEspecialistas||"").toLowerCase();
+  const filtrados = T_.lista.filter(p=>p.especialidade.toLowerCase().includes(q));
+  return `
+  <div class="eyebrow">${T_.eyebrow}</div>
+  <h2 class="page-title">${T_.titulo}</h2>
+  <p class="page-sub">${T_.sub}</p>
+  <div class="search-box">🔍 <input id="busca-especialistas-input" placeholder="${T_.buscaPlaceholder}" value="${state.buscaEspecialistas||''}" oninput="state.buscaEspecialistas=this.value;render();setTimeout(()=>{const el=document.getElementById('busca-especialistas-input');if(el){el.focus();el.selectionStart=el.selectionEnd=el.value.length;}},0)" /></div>
+  <div class="grid-3">
+    ${filtrados.map(p=>`
+      <div class="product-card">
+        <div style="display:flex;align-items:center;gap:12px">
+          <div style="width:44px;height:44px;border-radius:50%;background:var(--blue);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0">${p.iniciais}</div>
+          <div>
+            <div class="pname" style="font-size:1rem">${p.nome}</div>
+            <div style="font-size:.78rem;color:var(--muted)">${p.especialidade}</div>
+          </div>
+        </div>
+        <div style="margin-top:12px;display:flex;flex-direction:column;gap:5px;font-size:.8rem;color:var(--muted)">
+          <div>🎓 <b style="color:var(--ink)">${T_.formacaoLabel}:</b> ${p.formacao}</div>
+          <div>🏅 <b style="color:var(--ink)">${T_.experienciaLabel}:</b> ${p.experiencia}</div>
+          <div>📍 ${p.regiao}</div>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:14px;padding-top:12px;border-top:1px solid var(--border)">
+          <span style="font-size:.78rem;color:var(--muted)">${p.conexoes} ${T_.conexoesLabel}</span>
+          <button class="pbtn" style="width:auto;padding:8px 14px;margin-top:0">+ ${T_.conectar}</button>
+        </div>
+      </div>`).join("") || `<div class="empty">${T_.semResultados(state.buscaEspecialistas||"")}</div>`}
+  </div>`;
+}
+
 function findTip(query){
   const T_ = t().assistente;
   const q = query.toLowerCase();
@@ -703,6 +897,8 @@ function render(){
   let body="";
   if(state.page==="inicio") body = renderInicio();
   else if(state.page==="mercado") body = renderMercado();
+  else if(state.page==="transporte") body = renderTransporte();
+  else if(state.page==="especialistas") body = renderEspecialistas();
   else if(state.page==="assistente") body = renderAssistente();
   else if(state.page==="formacao") body = renderFormacao();
   else if(state.page==="alertas") body = renderAlertas();
